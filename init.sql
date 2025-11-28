@@ -1,0 +1,31 @@
+CREATE TABLE IF NOT EXISTS users (
+id SERIAL PRIMARY KEY,
+email TEXT NOT NULL,
+password TEXT NOT NULL,
+created_at TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp,
+deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS expenses (
+id SERIAL PRIMARY KEY,
+user_id INT REFERENCES users(id) NOT NULL,
+name TEXT NOT NULL,
+category_name TEXT NOT NULL,
+amount NUMERIC NOT NULL,
+month INT NOT NULL,
+year INT NOT NULL,
+created_at TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp,
+deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS income (
+id SERIAL PRIMARY KEY,
+user_id INT REFERENCES users(id) NOT NULL,
+name TEXT NOT NULL,
+category_name TEXT NOT NULL,
+amount NUMERIC NOT NULL,
+month INT NOT NULL,
+year INT NOT NULL,
+created_at TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp,
+deleted_at TIMESTAMP WITH TIME ZONE
+);

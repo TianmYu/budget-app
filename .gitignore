@@ -1,0 +1,8 @@
+scripts/
+Lib/
+include/
+misc/
+
+pyvenv.cfg
+.env
+compose.p.yml

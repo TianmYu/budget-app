@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - target: ${DB_PORT}
+        published: ${DB_PORT}
+        mode: host
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    restart: always
+
+  backend-api:
+    image: 127.0.0.1:5000/budget-app:latest
+    build: ./budget-backend/.
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+    ports:
+      - target: 8000
+        published: 8000
+        mode: host
+    environment: 
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_KEY: ${JWT_KEY}
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+networks:
+  app-network:
+
+volumes:
+  db-data:

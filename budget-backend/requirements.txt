@@ -1,0 +1,6 @@
+flask
+gunicorn
+PyJWT
+psycopg2-binary
+passlib
+flask-cors
