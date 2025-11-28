@@ -17,7 +17,7 @@ services:
     restart: always
 
   backend-api:
-    image: 127.0.0.1:5000/budget-app:latest
+    image: tianmyu/budget-app:latest
     build: ./budget-backend/.
     deploy:
       replicas: 1

@@ -4,6 +4,9 @@
   margin: 0;
   width: 100%;
   text-align: center;
+  height:100%;
+
+  color:#D7DADC;
 }
 
 .logo {
@@ -24,10 +27,6 @@
   padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
-}
-
 .blocks-container {
   display: flex;
   gap: 10px;
@@ -38,8 +37,8 @@
 .block {
   display: flex; /* fixed width */
   height: 60px;
-  background: #4a90e2;
-  color: white;
+  background: #444654;
+  color: #D7DADC;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,6 +47,12 @@
   cursor: pointer;
   user-select: none;
   transition: opacity 0.2s;
+  margin:8px;
+}
+
+.block:hover {
+  background: #4F535F;
+  color: #D7DADC;
 }
 
 .block-value {
@@ -57,7 +62,7 @@
 
 .block-label {
   font-size: 14px;
-  color: #555;
+  color: #B2B6BC;
   margin-bottom: 8px;
 }
 
@@ -75,7 +80,7 @@
 }
 
 .popup-content {
-  background-color: white;
+  background-color: #444654;
   padding: 24px;
   border-radius: 8px;
   position: relative;
@@ -94,6 +99,10 @@
 .button-row {
   display:flex;
   gap: 12px;
+}
+
+.popupField{
+  width:100%
 }
 
 @keyframes logo-spin {

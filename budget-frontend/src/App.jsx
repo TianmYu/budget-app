@@ -4,6 +4,7 @@ import {loginUser, createUser, verifyLogin, logoutUser, getSummary, getDetails, 
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { BarChart } from '@mui/x-charts/BarChart';
 
 function App() {
   const [currentPage, setCurrPage] = useState(0);
@@ -48,6 +49,10 @@ function App() {
     }
   };
 
+  const back = () => {
+    setCurrPage(0);
+  }
+
   switch (currentPage) {
     case 0:
     return (
@@ -55,7 +60,7 @@ function App() {
     )
     case 1:
     return (
-      <CreateAccount onCreate={createAccount} onReturn = {logout} />
+      <CreateAccount onCreate={createAccount} onReturn = {back} />
     )
     case 2:
     return (
@@ -234,10 +239,14 @@ function Dashboard({onReturn }){
           <IncomeExpenses data={incomeSum} type = {"income"} handleClick = {handleClickPopup}/>
           </div>
           <div className = "row">
-          <IncomeExpenses data={expenseSum} type = {"expenses"} handleClick = {handleClickPopup}/>
+          <IncomeExpenses data={expenseSum} type = {"expenses"} handleClick = {handleClickPopup} displayChart = {true}/>
           </div>
           <div className = "row">
-          <button onClick = {() => handleClick()}>Logout</button>
+            <div className = "col-5"></div>
+            <div className = "col-2">
+              <button onClick = {() => handleClick()}>Logout</button>
+            </div>
+            <div className = "col-5"></div>
           </div>
         </div>
         <div className = "col-2"></div>
@@ -267,23 +276,46 @@ function MonthSelector({month, year, handleMonthLeft, handleMonthRight}){
 
   return (
     <div>
-      <button onClick = {()=> handleClick("left")}> left </button>
+      <div className = "row">
+      <div className = "col-3"></div>
+      <div className = "col-2">
+      <button onClick = {()=> handleClick("left")}> Prev </button>
+      </div>
+      <div className = "col-2">
       {
         `${monthMap[parseInt(month)]}, ${year}`
       }
-      <button onClick = {()=> handleClick("right")}> right </button>
+      </div>
+      <div className = "col-2">
+      <button onClick = {()=> handleClick("right")}> Next </button>
+      </div>
+      <div className = "col-3"></div>
+      </div>
     </div>
   )
 }
 
 // general summary block
-function IncomeExpenses({data, type, handleClick}){
+function IncomeExpenses({data, type, handleClick, displayChart = false}){
   console.log(data)
+
+  let categories = []
+  let values = []
+  let max_val = 1000
+  
+  for (let item of data) {
+    categories.push(item.category_name)
+    values.push(item.total)
+    if (Number(item.total) > max_val) {
+      max_val = Number(item.total)
+    } 
+  }
+
   return (
     <div className="col-12">
+      <h4 style={{textAlign: 'left', marginLeft: '10px'}}>{type}</h4>
       <div className = "row">
-        <div className = "col-4">{type}</div>
-        <div className = "col-8">
+        <div className = "col-7" style={{paddingRight: "0px"}}>
           {data.map((item) => (
           <div
             className={"block"}
@@ -295,6 +327,55 @@ function IncomeExpenses({data, type, handleClick}){
           </div>
           ))}
         </div>
+        <div className = "col-5" style={{paddingLeft: "0px"}}>
+        {displayChart ? 
+        
+          <BarChart
+            xAxis={[
+              {
+                id: 'barCategories',
+                data: categories,
+                sx: {
+                color: '#D7DADC',        // x-axis label color
+                '& .MuiChartsAxis-tickLabel': {
+                  fill: '#D7DADC',       // x-axis tick color
+                  },
+                '& .MuiChartsAxis-line': {
+                    stroke: '#D7DADC', // **axis line color**
+                  },
+                  '& .MuiChartsAxis-tick': {
+                    stroke: '#D7DADC', // **axis line color**
+                  },
+                },
+              },
+            ]}
+            yAxis={[
+              {
+                min: 0,
+                max: max_val,
+                sx: {
+                  color: '#D7DADC',        // x-axis label color
+                  '& .MuiChartsAxis-tickLabel': {
+                    fill: '#D7DADC',       // x-axis tick color
+                    },
+                  '& .MuiChartsAxis-line': {
+                    stroke: '#D7DADC', // **axis line color**
+                  },
+                  '& .MuiChartsAxis-tick': {
+                    stroke: '#D7DADC', // **axis line color**
+                  },
+                },
+              }
+            ]}
+            series={[
+              {
+                data: values,
+              },
+            ]}
+            height={300}
+          />
+        : null}
+        </div> 
       </div>
     </div>
   );
@@ -341,7 +422,7 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-
+      <h>{type}: {category_name}</h>
       <table>
         <thead>
           <tr>
@@ -356,6 +437,7 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
             <tr key={row.id}>
               <td>
                 <input
+                  className={"popupField"}
                   type="text"
                   value={row.name}
                   onChange={(e) =>
@@ -365,6 +447,7 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
               </td>
               <td>
                 <input
+                  className={"popupField"}
                   type="number"
                   value={row.amount}
                   onChange={(e) =>
@@ -372,39 +455,44 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
                   }
                 />
               </td>
+              <td>
+                {
+                  index===rows.length-1?
+                  <button
+                      className="change-btn"
+                      onClick={() => onAddRow(row, type, category_name)}
+                    >
+                      Add
+                  </button>
+                  :
+                  <button
+                    className="change-btn"
+                    onClick={() => onUpdateRow(row, type, category_name)}
+                  >
+                    Save
+                  </button>
+                }
+              </td>
+              <td>
               {
-              index===rows.length-1?
-              <button
-                  className="change-btn"
-                  onClick={() => onAddRow(row, type, category_name)}
-                >
-                  Add
-                </button>
-              :
-              <div className="button-row">
-                <button
-                  className="change-btn"
-                  onClick={() => onUpdateRow(row, type, category_name)}
-                >
-                  Save
-                </button>
                 <button
                   className="delete-btn"
                   onClick={() => onDeleteRow(row, type)}
                 >
                   Delete
                 </button>
-              </div> 
               }
+
+              </td>
             </tr>
+            
           ))}
         </tbody>
       </table>
 
-        <button className="popup-close" onClick={onClose}>
+        {/* <button className="popup-close" onClick={onClose}>
           &times;
-        </button>
-        {type} {category_name}
+        </button> */}
       </div>
     </div>
   );

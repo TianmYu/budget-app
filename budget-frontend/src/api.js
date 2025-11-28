@@ -1,5 +1,6 @@
 // src/api.js
-const API_URL = ""; // your backend URL
+// const API_URL = ""; // your backend URL
+const API_URL = "https://localhost:8000"; // your backend URL
 
 export async function loginUser(email, password) {
     try{

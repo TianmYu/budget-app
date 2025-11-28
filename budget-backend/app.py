@@ -13,7 +13,7 @@ import os
 
 app = Flask(__name__, static_folder="./dist", static_url_path="/")
 
-# CORS(app, supports_credentials=True, origins=[os.environ.get("FRONTEND_HOST", "http://localhost:5173")])
+CORS(app, supports_credentials=True, origins=[os.environ.get("FRONTEND_HOST", "http://localhost:5173")])
 
 # postgres db client pool
 connected = False

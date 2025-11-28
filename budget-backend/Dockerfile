@@ -14,5 +14,4 @@ COPY . .
 # Expose server port
 EXPOSE 8000
 
-# CMD ["python", "app.py"]
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "--certfile=cert.pem", "--keyfile=key.pem", "app:app"]
