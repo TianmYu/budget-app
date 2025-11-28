@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: 'same-as-branch-mentioned-above'
+          ref: 'main'
     
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
