@@ -89,6 +89,7 @@ function Login({ onLogin, onSwitchCreate }) {
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        <h1>CashTrack</h1>
         <h2>Login</h2>
         <input
           type="text"

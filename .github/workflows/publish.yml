@@ -25,7 +25,7 @@ jobs:
         id: build-push-api
         uses: docker/build-push-action@v3
         with:
-          context: ./budget-backend
-          file: ./budget-backend/Dockerfile
+          context: .
+          file: .Dockerfile
           push: true
           tags: tianmyu/budget-app:latest

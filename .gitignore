@@ -1,8 +1,12 @@
-scripts/
+Scripts/
 Lib/
 include/
 misc/
+**/__pycache__/
+**/node_modules/
 
 pyvenv.cfg
 .env
 compose.p.yml
+
+*.pem

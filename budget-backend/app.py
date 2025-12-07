@@ -96,13 +96,9 @@ def require_jwt(fn):
     wrapper.__name__ = fn.__name__
     return wrapper
 
+# hose our frontend
 @app.route('/')
 def home():
-    index_path = os.path.join(app.static_folder, 'index.html')
-    app.logger.error("debug")
-    app.logger.error(index_path)
-    app.logger.error(os.path.exists(index_path))
-
     return send_from_directory(app.static_folder, 'index.html')
     
 @app.route("/login", methods = ['POST'])
