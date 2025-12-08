@@ -190,7 +190,7 @@ def get_summary_handler():
         income_rows = h.execute_query(db_pool, query, (user_id, month, year), app.logger, commit = False)
         income_summ = h.combine_summary(income_rows)
 
-        query = f"SELECT category_name, SUM(amount) FROM income WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
+        query = f"SELECT category_name, SUM(amount) FROM expenses WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
         expense_rows = h.execute_query(db_pool, query, (user_id, month, year), app.logger, commit = False)
         expense_summ = h.combine_summary(expense_rows)
 
