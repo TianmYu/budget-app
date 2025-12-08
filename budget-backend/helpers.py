@@ -10,6 +10,29 @@ def check_list_in_dict(source_list, target_dict):
             output = False
     return output
 
+def combine_summary(rows):
+    output = []
+    for row in rows:
+        output += [
+            {
+                "category_name": row[0],
+                "total": row[1]
+            }
+        ]
+    return output
+
+def combine_details(rows):
+    output = []
+    for row in rows:
+        output += [
+            {
+                "id": row[0],
+                "amount": row[1],
+                "name": row[2]
+            }
+        ]
+    return output
+
 # adds items in cat list to the output list if not present
 # otherwise sorts the target list by order of cat_list
 def add_categories(default_items, target_list):
@@ -39,30 +62,40 @@ def add_categories(default_items, target_list):
     return out_list
 
 # executes a query using the db pool, handles closing the connection and exceptions
-def execute_query(db_pool, query, query_arg_tuple, logger = None, commit = False, fetch = True):
-    conn = db_pool.getconn()
-    try:
-        with conn.cursor() as cur:
-            cur.execute(query, query_arg_tuple)
-            if fetch:
-                response = cur.fetchall()
+def execute_query(db_pool, query, query_arg_tuple, logger = None, commit = False, fetch = True, retries = 5):
+    for _ in range(retries): # retry logic
+        conn = None
+        try:
+            conn = db_pool.getconn()
+            with conn.cursor() as cur:
+                cur.execute(query, query_arg_tuple)
+                if fetch:
+                    response = cur.fetchall()
+                else:
+                    response = True
+
+                if commit:
+                    conn.commit()
+
+                return response
+            
+        except Exception as e:
+            if logger is not None:
+                logger.error(f"{e}, retrying")
             else:
-                response = True
+                print(f"{e}, retrying")
+            traceback.print_exc()
 
-            if commit:
-                conn.commit()
+            # discard the connection if we have an error
+            if conn:
+                db_pool.putconn(conn, close = True)
+            conn = None
 
-            return response
-        
-    except Exception as e:
-        if logger is not None:
-            logger.error(e)
-        else:
-            print(e)
-        traceback.print_exc()
+        finally:
+            if conn:
+                db_pool.putconn(conn)
 
-        return None
-
-    finally:
-        db_pool.putconn(conn)
+    if logger is not None:
+        logger.error("query failed")
+    return None
         

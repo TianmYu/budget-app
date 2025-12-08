@@ -172,22 +172,6 @@ def make_account_handler():
 def verify_handler():
     return jsonify({"status": "logged in"}), 200
 
-# helper for get summary path
-def get_summary(cur, user_id, table, month, year):
-    query = f"SELECT category_name, SUM(amount) FROM {table} WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
-    cur.execute(query, (user_id, month, year))
-    rows = cur.fetchall()
-
-    output = []
-    for row in rows:
-        output += [
-            {
-                "category_name": row[0],
-                "total": row[1]
-            }
-        ]
-    return output
-
 # summarizes expenses and incomes for a user from database
 @app.route("/get-summary", methods = ['GET'])
 @require_jwt
@@ -201,24 +185,25 @@ def get_summary_handler():
     month = request.args.get('month', default = datetime.now().month, type = int)
     year = request.args.get('year', default = datetime.now().year, type = int)
 
-    conn = db_pool.getconn()
     try:
-        with conn.cursor() as cur:
-            income_summ = get_summary(cur, user_id, table = "income", month = month, year = year)
-            expense_summ = get_summary(cur, user_id, table = "expenses", month = month, year = year)
+        query = f"SELECT category_name, SUM(amount) FROM income WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
+        income_rows = h.execute_query(db_pool, query, (user_id, month, year), app.logger, commit = False)
+        income_summ = h.combine_summary(income_rows)
 
-            income_summ = h.add_categories(default_income_categories, income_summ)
-            expense_summ = h.add_categories(default_expense_cateogires, expense_summ)
+        query = f"SELECT category_name, SUM(amount) FROM income WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
+        expense_rows = h.execute_query(db_pool, query, (user_id, month, year), app.logger, commit = False)
+        expense_summ = h.combine_summary(expense_rows)
 
-            app.logger.error("income")
-            app.logger.error(income_summ)
-            return jsonify({"income": income_summ, "expense": expense_summ}), 200
+        income_summ = h.add_categories(default_income_categories, income_summ)
+        expense_summ = h.add_categories(default_expense_cateogires, expense_summ)
+
+        app.logger.error("income")
+        app.logger.error(income_summ)
+        return jsonify({"income": income_summ, "expense": expense_summ}), 200
     except Exception as e:
         app.logger.error(e)
         traceback.print_exc()
         return jsonify({"error": "internal server error"}), 500
-    finally:
-        db_pool.putconn(conn)
 
 # helper for get details path
 def get_details(cur, user_id, table, category_name, month, year):
@@ -251,18 +236,16 @@ def get_details_handler():
     if table not in ["expenses", "income"]:
         return jsonify({"error": "invalid selection"}), 400
 
-    conn = db_pool.getconn()
     try:
-        with conn.cursor() as cur:
-            details = get_details(cur, user_id, table = table, category_name = category_name, month = month, year = year)
+        query = f"SELECT id, amount, name FROM {table} WHERE user_id = %s AND category_name = %s AND month = %s AND year = %s ORDER BY id ASC"
+        details_rows = h.execute_query(db_pool, query, (user_id, category_name, month, year), app.logger, commit = False)
+        details = h.combine_details(details_rows)
 
-            return jsonify({"details": details}), 200
+        return jsonify({"details": details}), 200
     except Exception as e:
         app.logger.error(e)
         traceback.print_exc()
         return jsonify({"error": "internal server error"}), 500
-    finally:
-        db_pool.putconn(conn)
 
 # allows for adding, editing, and deleting  items
 @app.route("/items", methods = ['POST', 'PUT', 'DELETE'])
