@@ -18,8 +18,8 @@ function App() {
     });
   })
 
-  const login = async (email, password) => {
-    const loggedIn = await loginUser(email, password);
+  const login = async (user, password) => {
+    const loggedIn = await loginUser(user, password);
     if (loggedIn){
       setCurrPage(2);
     }
@@ -30,8 +30,8 @@ function App() {
     setCurrPage(1);
   }
 
-  const createAccount = async (email, password) => {
-    const loggedIn = await createUser(email, password);
+  const createAccount = async (user, password) => {
+    const loggedIn = await createUser(user, password);
     console.log(`loggedin ${loggedIn}`)
     if (loggedIn){
       setCurrPage(2);
@@ -68,14 +68,14 @@ function App() {
 
 // login page
 function Login({ onLogin, onSwitchCreate }) {
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [loginFailed, setLoginFailed] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // call backend API to authenticate
-    let ret = await onLogin(email, password); // authenticate and set token if valid
+    let ret = await onLogin(user, password); // authenticate and set token if valid
     setLoginFailed(!ret)
   };
 
@@ -91,9 +91,9 @@ function Login({ onLogin, onSwitchCreate }) {
         <h2>Login</h2>
         <input
           type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Username"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
         />
         <input
           type="password"
@@ -114,13 +114,13 @@ function Login({ onLogin, onSwitchCreate }) {
 
 // account creation page
 function CreateAccount({ onCreate, onReturn}) {
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // call backend API to authenticate
-    onCreate(email, password); // authenicate and set token if valid
+    onCreate(user, password); // authenicate and set token if valid
   };
 
   const handleClick = () => {
@@ -133,9 +133,9 @@ function CreateAccount({ onCreate, onReturn}) {
         <h2>Create Account</h2>
         <input
           type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Username"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
         />
         <input
           type="password"
