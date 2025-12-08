@@ -1,12 +1,15 @@
 # Team Information: 
 
 Tian Yu, 1005363848, tianm.yu@mail.utoronto.ca
+github: https://github.com/TianmYu/budget-app
 
 # Motivation: 
-What motivated your team to spend time on this project? Describe the problem you’re solving and its significance.
+Money is the main stressor for 42% of Canadians in 2025, up from 38% in 2021 according to FP Canada, which makes sense given the context of the cost-of-living crisis. This stress often comes from uncertainty around bills and expenses, and therefore, a major way to alleviate the problem is proper budgeting. However, as the world shifts ever more quickly, we can struggle to find time to do so, especially with the growing complexity of technology. Therefore, our group has been motivated to make a streamlined and accessible budging application to help reduce financial stress.
 
 # Objectives
-What are the objectives of this project? Explain what you aimed to achieve through this implementation.
+The first objective is to setup all the required features of a basic budgeting application. This includes user account creation and management, as well as the ability to upload, view, and edit budgets. We also want to implement some graphical tools to help with visualization. Finally we want to add some security features like HTTPS and json web tokens to secure user data.
+
+The second objective is to implement the required technical features for deployment and production. This includes a github ci/cd pipeline to make deployment easy, monitoring tools in our final digital ocean environment, and a docker-swarm orchestration setup to allow to scale to multiple worker nodes and deal with increased user volume. 
 
 # Technical Stack
 The backend is implemented using a python flask WSGI framework, hosted on a Gunicorn HTTP server, and postgres db. This server hosts all endpoints, as well as the frontend UI.
@@ -15,6 +18,17 @@ The frontend UI is based on ReactJS and built using Vite.
 Deployment and orchestration is performed using docker swarm. The deployment consists of two docker images, one being the python server with static built frontend resources, and the second as a prebuilt postgres image.
 
 # Features: 
+## Feature: User account management
+A basic feature of our application is user account creation and usage. From the homepage, you can create and account or login. When an account is created, details are stored in a persistent postgres database, and when you login, details are validated against this database. This helps satisfy the state management requirement of the project.
+
+## Feature: User budget viewing and editing
+Another basic feature of the application is the ability for a user to view and edit parts of their budget once they login to their account. Once authenticated, users can input different budget elements, as well as view their previously entered entries and monthly summaries, as well as see a graphical overview. Data can be independently stored and retrieved for multiple users without overlap. This also helps satisfy the state management requirement of the project.
+
+## Feature: Monitoring and Observability
+A development and deployment feature we implemented was monitoring via digitalOcean's tools. We installed the digital ocean metrics agent to provide metrics on the dashboard, and created several resource alerts on the monitoring page:
+
+![alt text](image.png)
+
 ## Advanced feature: security
 Security is important to our project as we want user data to be protected from potential attacks, especially as financial adjacent data is being uploaded. There are three aspects to our security implementation
 
@@ -32,17 +46,6 @@ We implemented a github workflow as a CI/CD pipeline. The manifest for the workf
 2. Push the dockerfile image to our remote docker hub repository at tianmyu/budget-app:latest
 
 Since our docker compose file uses this image, it allows for easy updating of any docker compose or docker swarm based deployments after each merge to main.
-
-## Feature: User account management
-A basic feature of our application is user account creation and usage. From the homepage, you can create and account or login. When an account is created, details are stored in a persistent postgres database, and when you login, details are validated against this database. This helps satisfy the state management requirement of the project.
-
-## Feature: User budget viewing and editing
-Another basic feature of the application is the ability for a user to view and edit parts of their budget once they login to their account. Once authenticated, users can input different budget elements, as well as view their previously entered entries and monthly summaries, as well as see a graphical overview. Data can be independently stored and retrieved for multiple users without overlap. This also helps satisfy the state management requirement of the project.
-
-## Feature: Monitoring and Observability
-A development and deployment feature we implemented was monitoring via digitalOcean's tools. We installed the digital ocean metrics agent to provide metrics on the dashboard, and created several resource alerts on the monitoring page:
-
-![alt text](image.png)
 
 # User Guide:
 ## Making an account and logging in
@@ -93,4 +96,6 @@ live url:
 All contributions by Tian Yu
 
 # Lessons Learned and Concluding Remarks: 
-Share insights gained during the development process and any final thoughts about the project experience, if any.
+We learned the importance of properly setting up development and deployment pipelines during the development process. While setting up a dockerfile, and a proper docker compose takes some effort in the initial stages of project development, it greatly increases the ease of later stage work. Dockerfiles allow for deployment and development without the concerns of setting up identical environments each time. Using docker compose makes communication between multiple containers very easy, in our case, between our server and postgres server. It allows allows for a relatively easy translation to docker swarm in the production deployment phase. Finally, using docker makes final cloud deployment easy as well, as instead of needing to transfer all files between development and deployment environments, we can use docker hub for hosting the docker image and deploy by transferring only our docker compose file. 
+
+Overall the project experience has been insightful in showing first hand the entire development to deployment pipeline for a near production ready application.
