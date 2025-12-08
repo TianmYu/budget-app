@@ -1,6 +1,8 @@
 import os
 import re
 
+# helper program to fill out the .env imports on the docker compose file to make it ready for docker swarm
+
 # Paths
 env_file = ".env"
 compose_file = "compose.yml"

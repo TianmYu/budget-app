@@ -51,8 +51,8 @@ def login_response(user_id):
         "jwt",
         token,
         httponly=True,
-        secure=True, # TODO: set true when implementing https
-        samesite='None', # samesite='Lax',
+        secure=True, 
+        samesite='None',
         max_age=3600
     )
     return resp
@@ -65,7 +65,7 @@ def logout_response():
         "",
         httponly=True,
         secure=True, 
-        samesite='None', # samesite='Lax',
+        samesite='None', 
         max_age=0
     )
     return resp
@@ -85,7 +85,7 @@ def require_jwt(fn):
                 algorithms=["HS256"]
             )
             request.user_id = decoded["user"]  # attach user to request
-            # need to process the user if it exists too
+
         except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token expired"}), 401
         except jwt.InvalidTokenError:
@@ -96,7 +96,7 @@ def require_jwt(fn):
     wrapper.__name__ = fn.__name__
     return wrapper
 
-# hose our frontend
+# host our frontend
 @app.route('/')
 def home():
     return send_from_directory(app.static_folder, 'index.html')
@@ -131,13 +131,14 @@ def login_handler():
         else:
             return jsonify({"error": "user not found"}), 401  
 
+# logout, just wipe the jwt token
 @app.route("/logout", methods = ['POST'])
 @require_jwt
 def logout_handler():
-    # just wipe the jwt token
     resp = logout_response()
     return resp
 
+# handle account creation
 @app.route("/make-account", methods = ['POST'])
 def make_account_handler():
     data = request.get_json()
@@ -165,12 +166,13 @@ def make_account_handler():
             resp = login_response(user_id)
         return resp
 
+# use to check if we have a valid jwt token in browser
 @app.route("/verify", methods = ['GET'])
 @require_jwt
 def verify_handler():
-    # use to check if we have a valid jwt token in browser
     return jsonify({"status": "logged in"}), 200
 
+# helper for get summary path
 def get_summary(cur, user_id, table, month, year):
     query = f"SELECT category_name, SUM(amount) FROM {table} WHERE user_id = %s AND month = %s AND year = %s GROUP BY category_name"
     cur.execute(query, (user_id, month, year))
@@ -186,6 +188,7 @@ def get_summary(cur, user_id, table, month, year):
         ]
     return output
 
+# summarizes expenses and incomes for a user from database
 @app.route("/get-summary", methods = ['GET'])
 @require_jwt
 def get_summary_handler():
@@ -217,6 +220,7 @@ def get_summary_handler():
     finally:
         db_pool.putconn(conn)
 
+# helper for get details path
 def get_details(cur, user_id, table, category_name, month, year):
     query = f"SELECT id, amount, name FROM {table} WHERE user_id = %s AND category_name = %s AND month = %s AND year = %s ORDER BY id ASC"
     cur.execute(query, (user_id, category_name, month, year)) # make table more safe later
@@ -233,6 +237,7 @@ def get_details(cur, user_id, table, category_name, month, year):
         ]
     return output
 
+# returns all income and expense items in a category
 @app.route("/get-details", methods = ['GET'])
 @require_jwt
 def get_details_handler():
@@ -259,6 +264,7 @@ def get_details_handler():
     finally:
         db_pool.putconn(conn)
 
+# allows for adding, editing, and deleting  items
 @app.route("/items", methods = ['POST', 'PUT', 'DELETE'])
 @require_jwt
 def item_handler():
@@ -327,6 +333,6 @@ def item_handler():
             else:
                 return jsonify({"response": "row updated"}), 200
     
-
+# for running in debug mode
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port = 8000, ssl_context = ('cert.pem', 'key.pem')) # for dev only
+    app.run(host="0.0.0.0", port = 8000, ssl_context = ('cert.pem', 'key.pem')) 

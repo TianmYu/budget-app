@@ -6,19 +6,15 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { BarChart } from '@mui/x-charts/BarChart';
 
+// top level app, implemented as single window applications. handles switching between pages internally
 function App() {
   const [currentPage, setCurrPage] = useState(0);
 
   useEffect(() =>  {
-    // const oldState = currentPage
-    // setCurrPage(-1)
     verifyLogin().then(result => {
       if (result) {
         setCurrPage(2)
       } 
-      // else {
-      //   setCurrPage(oldState)
-      // }
     });
   })
 
@@ -53,6 +49,7 @@ function App() {
     setCurrPage(0);
   }
 
+  // display each page object based on internal state
   switch (currentPage) {
     case 0:
     return (
@@ -69,6 +66,7 @@ function App() {
   }
 }
 
+// login page
 function Login({ onLogin, onSwitchCreate }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -114,6 +112,7 @@ function Login({ onLogin, onSwitchCreate }) {
   );
 }
 
+// account creation page
 function CreateAccount({ onCreate, onReturn}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -151,7 +150,7 @@ function CreateAccount({ onCreate, onReturn}) {
   );
 }
 
-
+// main dashboard page
 function Dashboard({onReturn }){
   const [incomeSum, setIncomeSum] = useState([]);
   const [expenseSum, setExpenseSum] = useState([]);
@@ -184,6 +183,7 @@ function Dashboard({onReturn }){
     let newMonth = month - 1
     let newYear = year
 
+    // handle year decrement
     if (newMonth < 0) {
       newYear = year - 1
       newMonth = 11
@@ -209,8 +209,8 @@ function Dashboard({onReturn }){
     setYear(newYear)
   }
 
+  // opens the popup window
   const handleClickPopup = async (type, category_name) => {
-
     getDetails(type, category_name, month, year).then(result => {
       setRows([...result.details, { // add extra row as placeholder for "new row"
         id:-1,
@@ -257,6 +257,7 @@ function Dashboard({onReturn }){
   );
 }
 
+// small top menu that allows switching between months
 function MonthSelector({month, year, handleMonthLeft, handleMonthRight}){
   const monthMap = [
     "January", "February", "March", "April", "May", "June",
@@ -273,7 +274,6 @@ function MonthSelector({month, year, handleMonthLeft, handleMonthRight}){
       handleMonthRight()
     }
   }
-
 
   return (
     <div>
@@ -296,7 +296,7 @@ function MonthSelector({month, year, handleMonthLeft, handleMonthRight}){
   )
 }
 
-// general summary block
+// general summary block and bar graph
 function IncomeExpenses({data, type, handleClick, displayChart = false}){
   console.log(data)
 
@@ -317,7 +317,7 @@ function IncomeExpenses({data, type, handleClick, displayChart = false}){
       <h4 style={{textAlign: 'left', marginLeft: '10px'}}>{type}</h4>
       <div className = "row">
         <div className = "col-7" style={{paddingRight: "0px"}}>
-          {data.map((item) => (
+          {data.map((item) => ( // renders the budget summary cards
           <div
             className={"block"}
             key={item.category_name}
@@ -330,7 +330,7 @@ function IncomeExpenses({data, type, handleClick, displayChart = false}){
         </div>
         <div className = "col-5" style={{paddingLeft: "0px"}}>
         {displayChart ? 
-        
+          // render the bar graph
           <BarChart
             xAxis={[
               {
@@ -421,6 +421,7 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
   }
 
   return (
+    // render the popup with fields and buttons
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
       <h>{type}: {category_name}</h>
@@ -483,17 +484,11 @@ function Popup ({ show, type, category_name, onClose, rows, setRows, month, year
                   Delete
                 </button>
               }
-
               </td>
             </tr>
-            
           ))}
         </tbody>
       </table>
-
-        {/* <button className="popup-close" onClick={onClose}>
-          &times;
-        </button> */}
       </div>
     </div>
   );
