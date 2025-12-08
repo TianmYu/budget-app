@@ -70,7 +70,7 @@ When you're completed, you can click on the "Logout" button, which clears the jw
 # Development Guide:
 To run the deployment locally, the steps are simple, and as follows, once you have cloned the github repository:
 
-1. Setup HTTPS: generate a cert.pem and key.pem file and insert them in budget-backend/creds. This can be a self-signed certificate using openSSL, or obtained from a provider.\
+1. Setup HTTPS: generate a cert.pem and key.pem file. Then make folder in the repository "creds/" and insert your credentials. This can be a self-signed certificate using openSSL, or obtained from a provider.\
 If you want to disable HTTPS, remove the "--certfile=creds/cert.pem", "--keyfile=creds/key.pem" arguments from the Dockerfile
 
 2. create a .env file in the home directory with the following fields:\
