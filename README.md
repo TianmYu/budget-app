@@ -81,16 +81,21 @@ If you want to disable HTTPS, remove the "--certfile=creds/cert.pem", "--keyfile
     JWT_KEY=\
 We recommend generating a secure JWT key, which will be used to encrypt all JWT tokens
 
-3. Using docker compose: run "docker compose up --build" to build and run the app. 
+3. in budget-frontend/api.js, change:\
+    const API_URL = "https://64.225.4.9:8000"; \
+    to\
+    const API_URL = "https://localhost:8000"; 
 
-4. (Optional) Using docker swarm: generate a completed compose file by first running "python gen_compose.py" > compose.p.yml, which will fill the fields in compose.yml using the .env arguments.\
+4. Using docker compose: set "replicas: 1" for both services and run "docker compose up --build" to build and run the app. 
+
+5. (Optional) Using docker swarm: generate a completed compose file by first running "python gen_compose.py" > compose.p.yml, which will fill the fields in compose.yml using the .env arguments.\
 compose.p.yml can then be used directly by docker swarm
 "docker stack deploy -c docker-compose.yml 'stack-name'"
 
 The database will automatically be initialized and stored as a persistent docker volume, and accessible at localhost:DB_PORT. The database can be reset by deleting the volume at "stack name"_db-data 
 
 # Deployment Information
-live url: 64.225.4.9:8000
+live url: [64.225.4.9:8000](https://64.225.4.9:8000/)
 
 # Video Demo
 See the video_demo.mp4 file in this repository
