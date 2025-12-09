@@ -1,5 +1,6 @@
 
 const API_URL = "https://64.225.4.9:8000"; // backend URL
+// const API_URL = "https://localhost:8000"; // backend URL
 
 // contains async api functions for login/logout and CRUD features
 
