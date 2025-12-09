@@ -1,8 +1,8 @@
-# Team Information: 
+# Team Information
 
 Tian Yu, 1005363848, tianm.yu@mail.utoronto.ca
 
-# Motivation: 
+# Motivation
 Money is the main stressor for 42% of Canadians in 2025, up from 38% in 2021 according to FP Canada. These numbers seem accurate especially given the context of the cost-of-living crisis. This stress often comes from uncertainty around bills and expenses, and therefore, a major way to alleviate the problem is proper budgeting. However we can struggle to find time to do so, especially with the growing complexity of technology and our quickly shifting world. Therefore, our group has been motivated to make a streamlined and accessible budging application to help reduce financial stress.
 
 # Objectives
@@ -67,7 +67,7 @@ To see details or edit items, you can click on one of the cards to bring up the 
 
 When you're completed, you can click on the "Logout" button, which clears the jwt token from your browser and logs you out.
 
-# Development Guide:
+# Development Guide
 To run the deployment locally, the steps are simple, and as follows, once you have cloned the github repository:
 
 1. Setup HTTPS: generate a cert.pem and key.pem file. Then make folder in the repository "creds/" and insert your credentials. This can be a self-signed certificate using openSSL, or obtained from a provider.\
@@ -89,13 +89,16 @@ compose.p.yml can then be used directly by docker swarm
 
 The database will automatically be initialized and stored as a persistent docker volume, and accessible at localhost:DB_PORT. The database can be reset by deleting the volume at "stack name"_db-data 
 
-# Deployment Information:
+# Deployment Information
 live url: 64.225.4.9:8000
 
-# Individual Contributions: 
+# Video Demo
+See the video_demo.mp4 file in this repository
+
+# Individual Contributions 
 All contributions by Tian Yu
 
-# Lessons Learned and Concluding Remarks: 
+# Lessons Learned and Concluding Remarks
 We learned the importance of properly setting up development and deployment pipelines during the development process. While setting up a dockerfile and a proper docker compose takes some effort in the initial stages of project development, it greatly increases the ease of later stage work. Dockerfiles allow for deployment and development without the concerns of setting up identical environments each time. Using docker compose makes communication between multiple containers very easy, in our case, between our server and postgres server. It allows allows for a relatively easy translation to docker swarm in the production deployment phase. Finally, using docker makes final cloud deployment easy as well, as instead of needing to transfer all files between development and deployment environments, we can use docker hub for hosting the docker image and deploy by transferring only our docker compose file. 
 
 Overall the project experience has been insightful in showing first hand the entire development to deployment pipeline for a near production ready application.
